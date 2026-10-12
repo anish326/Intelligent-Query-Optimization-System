@@ -37,6 +37,11 @@ export interface PlanMetrics {
 export interface Recommendation {
   severity: 'info' | 'warning' | 'critical' | string;
   message: string;
+  issue?: string;
+  evidence?: string;
+  action?: string;
+  benefit?: string;
+  tradeoffs?: string;
 }
 
 export interface RunSample {

@@ -444,6 +444,7 @@ function App() {
             <ChartsSection
               result={result}
               historyEntries={historyEntries}
+              comparison={comparison}
               onNavigateToAnalyzer={() => setActiveTab('analyzer')}
             />
           </section>
@@ -485,6 +486,7 @@ function App() {
               prediction={result?.prediction ?? null}
               features={result?.features}
               actualRuntimeMs={result?.measured_runtime_ms}
+              historyEntries={historyEntries}
               onTrain={handleTrainModel}
               training={training}
             />

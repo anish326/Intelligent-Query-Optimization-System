@@ -1,12 +1,25 @@
 import React, { useState } from 'react';
-import { ModelStatus, Prediction } from '../types';
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  Legend,
+  LineChart,
+  Line,
+} from 'recharts';
+import { ModelStatus, Prediction, HistoryEntry } from '../types';
 
 interface ModelIntelligenceProps {
   modelStatus: ModelStatus | null;
   prediction: Prediction | null;
   features?: Record<string, number>;
   actualRuntimeMs?: number;
-  onTrain: () => Promise<void>;
+  historyEntries?: HistoryEntry[];
+  onTrain: () => void;
   training: boolean;
 }
 
@@ -15,71 +28,92 @@ export const ModelIntelligence: React.FC<ModelIntelligenceProps> = ({
   prediction,
   features,
   actualRuntimeMs,
+  historyEntries = [],
   onTrain,
   training,
 }) => {
   const [showFeatures, setShowFeatures] = useState(false);
-  const isTrained = (modelStatus?.samples ?? 0) > 0 && modelStatus?.version != null;
+  const [activePlotTab, setActivePlotTab] = useState<'paired' | 'errors'>('paired');
 
   const predError =
-    actualRuntimeMs != null && prediction?.runtime_ms != null
-      ? Math.abs(actualRuntimeMs - prediction.runtime_ms)
+    actualRuntimeMs != null && prediction != null
+      ? Math.abs(prediction.runtime_ms - actualRuntimeMs)
       : null;
+
+  // Filter history entries that have both measured and predicted runtimes
+  const validHistoryPoints = historyEntries
+    .filter((h) => h.predicted_ms != null && h.runtime_ms != null)
+    .slice(0, 15)
+    .map((h, idx) => ({
+      name: `Q${idx + 1} (${h.query_fingerprint.slice(0, 6)})`,
+      actual_ms: Number(h.runtime_ms.toFixed(3)),
+      predicted_ms: Number((h.predicted_ms ?? 0).toFixed(3)),
+      abs_error_ms: Number(Math.abs(h.runtime_ms - (h.predicted_ms ?? 0)).toFixed(3)),
+    }));
 
   return (
     <div className="card model-intelligence-card">
       <div className="model-header-row">
         <div>
           <h2 className="card-title">
-            Machine Learning Runtime Intelligence
+            Machine Learning Intelligence Dashboard
           </h2>
           <p className="card-subtitle">
-            Plan-aware runtime regression using scikit-learn <code>RandomForestRegressor</code> (240 estimators). Evaluated using zero-leakage grouped holdout against a naive central-tendency median baseline.
+            Plan-aware RandomForestRegressor evaluating query execution runtime across 16 AST &amp; EXPLAIN plan features.
           </p>
         </div>
 
-        <button
-          type="button"
-          className="btn btn-outline"
-          onClick={onTrain}
-          disabled={training}
-          title="Retrain model on latest records in query_history"
-        >
-          {training ? (
-            <span className="loading-content">
-              <span className="spinner"></span> Fitting trees...
-            </span>
-          ) : (
-            'Retrain Model'
-          )}
-        </button>
+        <div className="model-actions-bar">
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            onClick={onTrain}
+            disabled={training}
+          >
+            {training ? 'Evaluating Model...' : 'Retrain & Evaluate Model'}
+          </button>
+        </div>
       </div>
 
-      {/* Model Status & Workload Specs Grid */}
-      <div className="model-specs-grid">
+      {/* Primary Architecture & Validation Specification Cards */}
+      <div className="specs-grid">
         <div className="spec-card">
-          <span className="spec-label">Algorithm</span>
-          <span className="spec-value">Random Forest Regressor</span>
-          <span className="spec-sub">240 estimator trees, min_leaf=2</span>
+          <span className="spec-label">Model Architecture</span>
+          <span className="spec-value">RandomForestRegressor</span>
+          <span className="spec-sub">
+            {modelStatus?.version ?? '240 Estimators • max_depth=14'}
+          </span>
         </div>
 
         <div className="spec-card">
-          <span className="spec-label">Model Status</span>
-          <span className={`spec-value ${isTrained ? 'text-mint' : 'text-amber'}`}>
-            {isTrained ? 'Trained & Persisted' : 'Untrained'}
+          <span className="spec-label">Held-Out Test MAE</span>
+          <span className="spec-value text-mint">
+            {modelStatus?.mae_ms != null ? `${modelStatus.mae_ms.toFixed(3)} ms` : 'Uncalibrated'}
           </span>
           <span className="spec-sub">
-            {isTrained ? `Version: ${modelStatus?.version}` : 'Run training or collect queries'}
+            {modelStatus?.outperforms_baseline
+              ? `${modelStatus.mae_improvement_pct}% lower error vs baseline`
+              : 'Mean Absolute Error on holdout'}
           </span>
         </div>
 
         <div className="spec-card">
-          <span className="spec-label">Evaluation Workload</span>
-          <span className="spec-value">{modelStatus?.samples ?? 0} Executions</span>
+          <span className="spec-label">Held-Out Test RMSE</span>
+          <span className="spec-value">
+            {modelStatus?.rmse_ms != null ? `${modelStatus.rmse_ms.toFixed(3)} ms` : 'N/A'}
+          </span>
+          <span className="spec-sub">Root Mean Squared Error</span>
+        </div>
+
+        <div className="spec-card">
+          <span className="spec-label">Dataset Partitions</span>
+          <span className="spec-value">
+            {modelStatus?.samples ? `${modelStatus.samples} Total Samples` : 'No samples'}
+          </span>
           <span className="spec-sub">
             {modelStatus?.train_samples != null && modelStatus?.val_samples != null
-              ? `${modelStatus.train_samples} Train / ${modelStatus.val_samples} Holdout Val (${modelStatus.unique_fingerprints ?? 0} fingerprints, ${modelStatus.unique_shapes ?? 0} shapes)`
-              : 'Measured executions in database'}
+              ? `${modelStatus.train_samples} Train / ${modelStatus.val_samples} Holdout Test`
+              : 'Holdout Partition'}
           </span>
         </div>
 
@@ -90,11 +124,11 @@ export const ModelIntelligence: React.FC<ModelIntelligenceProps> = ({
               ? 'Grouped Family Holdout'
               : modelStatus?.evaluation_strategy === 'grouped_fingerprint_holdout'
               ? 'Grouped Fingerprint'
-              : 'Chronological Split'}
+              : 'Grouped Holdout'}
           </span>
           <span className="spec-sub">
             {modelStatus?.held_out_families && modelStatus.held_out_families.length > 0
-              ? `Held-out: ${modelStatus.held_out_families.join(', ')} (Zero template leakage)`
+              ? `Held-out: ${modelStatus.held_out_families.join(', ')} (Zero leakage)`
               : `${modelStatus?.query_families_count ?? 9} query families (Zero leakage)`}
           </span>
         </div>
@@ -187,6 +221,86 @@ export const ModelIntelligence: React.FC<ModelIntelligenceProps> = ({
         </div>
       </div>
 
+      {/* Prediction vs Actual Visualization (Feature 5 Requirement) */}
+      {validHistoryPoints.length > 0 && (
+        <div className="prediction-plot-section">
+          <div className="prediction-plot-header">
+            <div>
+              <span className="baseline-title-tag">EMPIRICAL EVALUATION PLOT</span>
+              <h3 className="baseline-subheading">
+                Prediction vs. Actual Measured Runtime Across Benchmark Queries
+              </h3>
+            </div>
+            <div className="plan-view-tabs">
+              <button
+                type="button"
+                className={`plan-tab-btn ${activePlotTab === 'paired' ? 'active' : ''}`}
+                onClick={() => setActivePlotTab('paired')}
+              >
+                Predicted vs Actual (ms)
+              </button>
+              <button
+                type="button"
+                className={`plan-tab-btn ${activePlotTab === 'errors' ? 'active' : ''}`}
+                onClick={() => setActivePlotTab('errors')}
+              >
+                Absolute Errors (|Delta| ms)
+              </button>
+            </div>
+          </div>
+
+          <div className="prediction-chart-box">
+            {activePlotTab === 'paired' ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={validHistoryPoints} margin={{ top: 15, right: 25, left: 10, bottom: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1c2f42" vertical={false} />
+                  <XAxis dataKey="name" stroke="#8b9eb0" tick={{ fill: '#8b9eb0', fontSize: 11 }} />
+                  <YAxis stroke="#8b9eb0" tick={{ fill: '#8b9eb0', fontSize: 12 }} unit=" ms" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#0c1622',
+                      borderColor: '#243b52',
+                      borderRadius: '8px',
+                      color: '#e2e8f0',
+                    }}
+                    formatter={(val: any) => [`${val} ms`]}
+                  />
+                  <Legend wrapperStyle={{ color: '#8b9eb0', fontSize: '13px' }} />
+                  <Bar dataKey="actual_ms" name="Measured Runtime (ms)" fill="#2dd4bf" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                  <Bar dataKey="predicted_ms" name="ML Predicted Runtime (ms)" fill="#38bdf8" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <ResponsiveContainer width="100%" height={260}>
+                <LineChart data={validHistoryPoints} margin={{ top: 15, right: 25, left: 10, bottom: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1c2f42" vertical={false} />
+                  <XAxis dataKey="name" stroke="#8b9eb0" tick={{ fill: '#8b9eb0', fontSize: 11 }} />
+                  <YAxis stroke="#8b9eb0" tick={{ fill: '#8b9eb0', fontSize: 12 }} unit=" ms" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#0c1622',
+                      borderColor: '#243b52',
+                      borderRadius: '8px',
+                      color: '#e2e8f0',
+                    }}
+                    formatter={(val: any) => [`${val} ms`]}
+                  />
+                  <Legend wrapperStyle={{ color: '#8b9eb0', fontSize: '13px' }} />
+                  <Line
+                    type="monotone"
+                    dataKey="abs_error_ms"
+                    name="Absolute Residual Error (|Actual - Predicted| ms)"
+                    stroke="#f59e0b"
+                    strokeWidth={2.5}
+                    dot={{ r: 4, fill: '#f59e0b' }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Active Query Prediction vs Measurement (if analyzed) */}
       {prediction && (
         <div className="prediction-insight-banner">
@@ -226,7 +340,7 @@ export const ModelIntelligence: React.FC<ModelIntelligenceProps> = ({
           </div>
 
           <p className="features-note-sub">
-            ℹ️ <em>Plan Features Note:</em> {prediction.features_note || 'Plan features derived from estimated PostgreSQL query plan (EXPLAIN without ANALYZE) prior to actual execution.'}
+            <em>Plan Features Note:</em> {prediction.features_note || 'Plan features derived from estimated PostgreSQL query plan (EXPLAIN without ANALYZE) prior to actual execution.'}
           </p>
         </div>
       )}
@@ -243,7 +357,7 @@ export const ModelIntelligence: React.FC<ModelIntelligenceProps> = ({
               className="btn btn-ghost btn-sm"
               onClick={() => setShowFeatures(!showFeatures)}
             >
-              {showFeatures ? 'Hide Extracted Vector ▲' : 'Inspect Feature Vector ▼'}
+              {showFeatures ? 'Hide Extracted Vector' : 'Inspect Feature Vector'}
             </button>
           )}
         </div>

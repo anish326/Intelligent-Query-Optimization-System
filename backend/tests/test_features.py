@@ -192,3 +192,46 @@ def test_model_training_grouped_family_holdout_zero_overlap(tmp_path, monkeypatc
     model2.load()
     assert model2.status.version == status.version
     assert model2.status.held_out_families == status.held_out_families
+
+def test_recommendations_detect_seq_scan_filter_and_spill():
+    from app.recommendations import recommendations
+    bad_plan = {
+        "Plan": {
+            "Node Type": "Seq Scan",
+            "Relation Name": "orders",
+            "Filter": "(customer_id = 42)",
+            "Actual Rows": 500,
+            "Actual Loops": 1,
+            "Total Cost": 150.0,
+            "Plans": [
+                {
+                    "Node Type": "Sort",
+                    "Sort Key": "orders.total DESC",
+                    "Sort Method": "external merge Disk",
+                    "Temp Read Blocks": 12,
+                    "Total Cost": 80.0,
+                }
+            ]
+        }
+    }
+    recs = recommendations(bad_plan)
+    assert len(recs) >= 2
+    # Check structured recommendation fields
+    first = recs[0]
+    assert "issue" in first and "evidence" in first and "action" in first and "benefit" in first and "tradeoffs" in first
+    assert any(r["severity"] == "critical" for r in recs)
+
+def test_recommendations_clean_plan():
+    from app.recommendations import recommendations
+    clean_plan = {
+        "Plan": {
+            "Node Type": "Index Scan",
+            "Relation Name": "customers",
+            "Total Cost": 8.0,
+            "Actual Rows": 1,
+            "Actual Loops": 1,
+        }
+    }
+    recs = recommendations(clean_plan)
+    assert len(recs) == 1
+    assert recs[0]["issue"] == "Optimal Execution Structure"
