@@ -45,8 +45,6 @@ function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('analyzer');
 
   const [apiUrl, setApiUrl] = useState<string>(getInitialApiBase);
-  const [tempApiUrl, setTempApiUrl] = useState<string>(apiUrl);
-  const [showApiModal, setShowApiModal] = useState<boolean>(false);
   const [isSimulationMode, setIsSimulationMode] = useState<boolean>(!apiUrl);
 
   const [sql, setSql] = useState<string>(QUERY_EXAMPLES[0].sql);
@@ -403,19 +401,6 @@ function App() {
             <span className="tab-pill-badge">{historyEntries.length}</span>
           </button>
         </nav>
-
-        <div className="sidebar-footer">
-          <button
-            type="button"
-            className="sidebar-settings-btn"
-            onClick={() => {
-              setTempApiUrl(apiUrl);
-              setShowApiModal(true);
-            }}
-          >
-            API Settings
-          </button>
-        </div>
       </aside>
 
       {/* Main Content Area */}
@@ -534,67 +519,6 @@ function App() {
           </div>
         </footer>
       </div>
-
-      {/* API Endpoint & Backend Settings Modal */}
-      {showApiModal && (
-        <div className="modal-overlay" onClick={() => setShowApiModal(false)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Database &amp; API Endpoint Settings</h3>
-              <button className="modal-close" onClick={() => setShowApiModal(false)}>&times;</button>
-            </div>
-            <div className="modal-body">
-              <p className="modal-desc">
-                Active Execution Mode:{' '}
-                <strong>
-                  {isSimulationMode ? 'In-Browser Simulation Engine' : 'Live PostgreSQL 16 Backend'}
-                </strong>
-              </p>
-              <label className="modal-label">Backend API URL:</label>
-              <input
-                type="text"
-                className="modal-input"
-                value={tempApiUrl}
-                placeholder="e.g. http://localhost:8000 or https://your-backend.onrender.com"
-                onChange={(e) => setTempApiUrl(e.target.value)}
-              />
-              <p className="modal-hint">
-                When running locally with Docker Compose, enter <code>http://localhost:8000</code>. When deployed on Vercel without a cloud backend, leave empty to use the In-Browser Simulation Engine.
-              </p>
-            </div>
-            <div className="modal-footer">
-              <button
-                className="btn btn-secondary"
-                onClick={() => {
-                  localStorage.removeItem('QUERYOPT_API_URL');
-                  setApiUrl((import.meta as any).env?.DEV ? 'http://localhost:8000' : '');
-                  setShowApiModal(false);
-                }}
-              >
-                Reset Default
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  const clean = tempApiUrl.trim().replace(/\/$/, '');
-                  if (clean) {
-                    localStorage.setItem('QUERYOPT_API_URL', clean);
-                  } else {
-                    localStorage.removeItem('QUERYOPT_API_URL');
-                  }
-                  setApiUrl(clean);
-                  setShowApiModal(false);
-                  refreshHealth();
-                }}
-              >
-                Save &amp; Connect
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-
     </div>
   );
 }
