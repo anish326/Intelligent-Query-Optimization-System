@@ -93,7 +93,7 @@ export const QueryWorkspace: React.FC<QueryWorkspaceProps> = ({
       <div className="workspace-header">
         <div className="workspace-title-row">
           <h2 className="card-title">
-            <span className="title-icon">⚡</span> SQL Query Editor
+            SQL Query Editor
           </h2>
           <div className="workspace-controls-bar">
             {/* Database Selector */}
@@ -210,7 +210,6 @@ export const QueryWorkspace: React.FC<QueryWorkspaceProps> = ({
       {/* Validation / Execution Error Banner */}
       {error && (
         <div className="error-banner" role="alert">
-          <div className="error-icon">⚠️</div>
           <div className="error-text">
             <strong>Query Validation / Execution Error:</strong> {error}
           </div>
@@ -236,7 +235,7 @@ export const QueryWorkspace: React.FC<QueryWorkspaceProps> = ({
             onClick={onOpenCompare}
             title="Open side-by-side comparison bench"
           >
-            ⚖️ Compare Rewrites
+            Compare Rewrites
           </button>
 
           <button
@@ -250,7 +249,7 @@ export const QueryWorkspace: React.FC<QueryWorkspaceProps> = ({
                 <span className="spinner"></span> {loadingStage || 'Measuring...'}
               </span>
             ) : (
-              <span>⚡ Measure &amp; Analyze</span>
+              <span>Measure &amp; Analyze</span>
             )}
           </button>
         </div>

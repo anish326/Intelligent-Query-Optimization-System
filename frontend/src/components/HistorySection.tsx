@@ -31,7 +31,7 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
       <div className="history-card-header">
         <div>
           <h2 className="card-title">
-            <span className="title-icon">📜</span> Recorded Query Audit History
+            Recorded Query Audit History
           </h2>
           <p className="card-subtitle">
             Historical executions recorded in PostgreSQL <code>query_history</code> used for model retraining and observational audits.
@@ -65,7 +65,6 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
         </div>
       ) : entries.length === 0 ? (
         <div className="history-empty-state">
-          <span className="empty-icon">📭</span>
           <p>No queries recorded in history yet. Execute a query above to log measured runs.</p>
         </div>
       ) : (

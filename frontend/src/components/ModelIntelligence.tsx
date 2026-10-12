@@ -31,7 +31,7 @@ export const ModelIntelligence: React.FC<ModelIntelligenceProps> = ({
       <div className="model-header-row">
         <div>
           <h2 className="card-title">
-            <span className="title-icon">🤖</span> Machine Learning Runtime Intelligence
+            Machine Learning Runtime Intelligence
           </h2>
           <p className="card-subtitle">
             Plan-aware runtime regression using scikit-learn <code>RandomForestRegressor</code> (240 estimators). Evaluated using zero-leakage grouped holdout against a naive central-tendency median baseline.
@@ -50,7 +50,7 @@ export const ModelIntelligence: React.FC<ModelIntelligenceProps> = ({
               <span className="spinner"></span> Fitting trees...
             </span>
           ) : (
-            '⚙️ Retrain Model'
+            'Retrain Model'
           )}
         </button>
       </div>
@@ -111,7 +111,7 @@ export const ModelIntelligence: React.FC<ModelIntelligenceProps> = ({
           </div>
           {modelStatus?.outperforms_baseline && (
             <div className="baseline-badge-outperform">
-              🏆 OUTPERFORMS BASELINE ({modelStatus.mae_improvement_pct}% lower MAE)
+              OUTPERFORMS BASELINE ({modelStatus.mae_improvement_pct}% lower MAE)
             </div>
           )}
         </div>

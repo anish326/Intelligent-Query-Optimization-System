@@ -346,7 +346,6 @@ function App() {
             className={`tab-nav-btn ${activeTab === 'analyzer' ? 'active' : ''}`}
             onClick={() => setActiveTab('analyzer')}
           >
-            <span className="tab-icon">⚡</span>
             <span>Query Analyzer</span>
             {result && <span className="tab-pill-badge">{result.measured_runtime_ms.toFixed(2)} ms</span>}
           </button>
@@ -358,7 +357,6 @@ function App() {
             className={`tab-nav-btn ${activeTab === 'charts' ? 'active' : ''}`}
             onClick={() => setActiveTab('charts')}
           >
-            <span className="tab-icon">📈</span>
             <span>Latency Charts</span>
             {result && <span className="tab-status-dot"></span>}
           </button>
@@ -370,7 +368,6 @@ function App() {
             className={`tab-nav-btn ${activeTab === 'compare' ? 'active' : ''}`}
             onClick={() => setActiveTab('compare')}
           >
-            <span className="tab-icon">⚖️</span>
             <span>Compare Rewrites</span>
             {comparison && (
               <span className="tab-pill-badge delta-badge">
@@ -387,7 +384,6 @@ function App() {
             className={`tab-nav-btn ${activeTab === 'plan' ? 'active' : ''}`}
             onClick={() => setActiveTab('plan')}
           >
-            <span className="tab-icon">🔍</span>
             <span>Execution Plan</span>
             {result?.plan && <span className="tab-status-dot"></span>}
           </button>
@@ -399,7 +395,6 @@ function App() {
             className={`tab-nav-btn ${activeTab === 'model' ? 'active' : ''}`}
             onClick={() => setActiveTab('model')}
           >
-            <span className="tab-icon">🤖</span>
             <span>ML Intelligence</span>
             {modelStatus?.samples ? <span className="tab-pill-badge">{modelStatus.samples} samples</span> : null}
           </button>
@@ -411,7 +406,6 @@ function App() {
             className={`tab-nav-btn ${activeTab === 'history' ? 'active' : ''}`}
             onClick={() => setActiveTab('history')}
           >
-            <span className="tab-icon">📜</span>
             <span>Audit History</span>
             <span className="tab-pill-badge">{historyEntries.length}</span>
           </button>
@@ -527,13 +521,13 @@ function App() {
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Database &amp; API Endpoint Settings</h3>
-              <button className="modal-close" onClick={() => setShowApiModal(false)}>✕</button>
+              <button className="modal-close" onClick={() => setShowApiModal(false)}>&times;</button>
             </div>
             <div className="modal-body">
               <p className="modal-desc">
                 Active Execution Mode:{' '}
                 <strong>
-                  {isSimulationMode ? '🟣 In-Browser Simulation Engine' : '🟢 Live PostgreSQL 16 Backend'}
+                  {isSimulationMode ? 'In-Browser Simulation Engine' : 'Live PostgreSQL 16 Backend'}
                 </strong>
               </p>
               <label className="modal-label">Backend API URL:</label>
@@ -610,7 +604,7 @@ class ErrorBoundary extends React.Component<
       return (
         <div className="app-shell error-recovery-screen">
           <div className="card error-card">
-            <h2>⚠️ Dashboard Rendering Error</h2>
+            <h2>Dashboard Rendering Error</h2>
             <p className="error-msg">{this.state.error?.message || 'An unexpected rendering error occurred.'}</p>
             <button className="btn btn-primary" onClick={() => window.location.reload()}>
               ↻ Reload Application

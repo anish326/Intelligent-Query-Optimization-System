@@ -39,7 +39,7 @@ export const ComparisonPanel: React.FC<ComparisonPanelProps> = ({
       <div className="comparison-header">
         <div>
           <h2 className="card-title">
-            <span className="title-icon">⚖️</span> Fair Query Optimization Benchmarking
+            Fair Query Optimization Benchmarking
           </h2>
           <p className="card-subtitle">
             Controlled interleaved benchmarking measuring median, IQR spread, and P95 latency with automated AST semantic analysis, multiset result equivalence, and paired bootstrap uncertainty.
@@ -76,7 +76,7 @@ export const ComparisonPanel: React.FC<ComparisonPanelProps> = ({
                 <span className="spinner"></span> Measuring Interleaved Pairs...
               </span>
             ) : (
-              '⚡ Benchmark Comparison'
+              'Benchmark Comparison'
             )}
           </button>
         </div>
@@ -130,9 +130,9 @@ export const ComparisonPanel: React.FC<ComparisonPanelProps> = ({
           <div className={`status-banner banner-${status?.toLowerCase()}`}>
             <div className="banner-header-row">
               <span className="banner-title">
-                {status === 'VERIFIED_EQUIVALENT' && '✅ SEMANTIC EQUIVALENCE VERIFIED'}
-                {status === 'SEMANTIC_DIFFERENCE_DETECTED' && '⚠️ SEMANTIC DIFFERENCES DETECTED'}
-                {status === 'DIFFERENT_RESULTS' && '🚫 DIFFERENT QUERY RESULTS'}
+                {status === 'VERIFIED_EQUIVALENT' && 'SEMANTIC EQUIVALENCE VERIFIED'}
+                {status === 'SEMANTIC_DIFFERENCE_DETECTED' && 'SEMANTIC DIFFERENCES DETECTED'}
+                {status === 'DIFFERENT_RESULTS' && 'DIFFERENT QUERY RESULTS'}
                 {status === 'EQUIVALENCE_UNVERIFIED' && 'ℹ️ EQUIVALENCE UNVERIFIED'}
               </span>
               <span className="badge-status-code">{status}</span>
@@ -179,10 +179,10 @@ export const ComparisonPanel: React.FC<ComparisonPanelProps> = ({
             <div className="query-delta-card">
               <div className="delta-verdict-tag-row">
                 <span className={`verdict-badge verdict-${verdict?.toLowerCase()}`}>
-                  {verdict === 'FASTER' && '⚡ MEASURED FASTER'}
-                  {verdict === 'SLOWER' && '🔻 MEASURED SLOWER'}
-                  {verdict === 'INCONCLUSIVE' && '⚖️ INCONCLUSIVE'}
-                  {verdict === 'SEMANTIC_MISMATCH' && '⚠️ SEMANTIC MISMATCH'}
+                  {verdict === 'FASTER' && 'MEASURED FASTER'}
+                  {verdict === 'SLOWER' && 'MEASURED SLOWER'}
+                  {verdict === 'INCONCLUSIVE' && 'INCONCLUSIVE'}
+                  {verdict === 'SEMANTIC_MISMATCH' && 'SEMANTIC MISMATCH'}
                 </span>
               </div>
 
@@ -234,12 +234,11 @@ export const ComparisonPanel: React.FC<ComparisonPanelProps> = ({
           </div>
 
           <p className="explainer-caution">
-            🛡️ <em>Benchmarking Protocol:</em> {comparison.measurement_note}
+            <em>Benchmarking Protocol:</em> {comparison.measurement_note}
           </p>
         </div>
       ) : (
         <div className="comparison-placeholder-box">
-          <span className="placeholder-icon">⚖️</span>
           <p>
             Click &ldquo;Benchmark Comparison&rdquo; to execute interleaved measurements on both queries under identical database conditions.
           </p>

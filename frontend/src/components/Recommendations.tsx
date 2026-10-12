@@ -15,7 +15,7 @@ export const Recommendations: React.FC<RecommendationsProps> = ({ recommendation
       <div className="recommendations-header">
         <div>
           <h2 className="card-title">
-            <span className="title-icon">💡</span> Optimization Insights
+            Optimization Insights
           </h2>
           <p className="card-subtitle">
             Heuristic rules analyzing PostgreSQL execution nodes, disk spillage, and sequential scan row counts.
@@ -26,7 +26,6 @@ export const Recommendations: React.FC<RecommendationsProps> = ({ recommendation
 
       {recommendations.length === 0 || isDefaultInfo ? (
         <div className="recommendations-clean-state">
-          <div className="clean-icon">✓</div>
           <div className="clean-text">
             <strong>Optimal Plan Shape Detected</strong>
             <p>
@@ -67,7 +66,7 @@ export const Recommendations: React.FC<RecommendationsProps> = ({ recommendation
       )}
 
       <div className="recommendations-footer-disclaimer">
-        ⚠️ <em>Advisory Note:</em> Recommendations are heuristic rules based on plan node metrics and do not modify database schemas, create indexes, or guarantee runtime reductions without empirical validation.
+        <em>Advisory Note:</em> Recommendations are heuristic rules based on plan node metrics and do not modify database schemas, create indexes, or guarantee runtime reductions without empirical validation.
       </div>
     </div>
   );

@@ -44,7 +44,7 @@ export const Header: React.FC<HeaderProps> = ({
             style={{ cursor: 'pointer' }}
           >
             <span className="status-dot"></span>
-            <span className="status-label">In-Browser ML Engine (Cloud Preview) ⚙️</span>
+            <span className="status-label">In-Browser ML Engine (Cloud Preview)</span>
           </div>
         ) : (
           <div
@@ -62,9 +62,9 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="status-dot"></span>
             <span className="status-label">
               {backendConnected === true
-                ? 'PostgreSQL 16 Connected (Live) ⚙️'
+                ? 'PostgreSQL 16 Connected (Live)'
                 : backendConnected === false
-                ? 'Backend Offline ⚙️'
+                ? 'Backend Offline'
                 : 'Connecting...'}
             </span>
           </div>
@@ -72,7 +72,6 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* ML Model Status */}
         <div className={`status-pill ${isTrained ? 'pill-trained' : 'pill-untrained'}`}>
-          <span className="model-chip-icon">🤖</span>
           <span className="status-label">
             {isTrained ? (
               <>Model: <strong>{modelStatus?.version}</strong> ({modelStatus?.samples} samples)</>
@@ -86,7 +85,6 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Environment Profile */}
         <div className="status-pill pill-env" title="Read-only queries permitted on controlled test dataset">
-          <span className="env-lock-icon">🔒</span>
           <span className="status-label">Controlled Read-Only DB</span>
         </div>
       </div>

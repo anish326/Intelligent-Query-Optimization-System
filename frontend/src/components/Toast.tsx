@@ -14,8 +14,8 @@ export const ToastContainer: React.FC<ToastProps> = ({ toasts, onDismiss }) => {
       {toasts.map((toast) => (
         <div key={toast.id} className={`toast-card toast-${toast.type}`}>
           <div className="toast-icon">
-            {toast.type === 'success' && '✓'}
-            {toast.type === 'error' && '✕'}
+            
+            
             {toast.type === 'info' && 'ℹ'}
           </div>
           <div className="toast-content">

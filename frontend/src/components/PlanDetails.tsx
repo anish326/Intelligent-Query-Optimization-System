@@ -35,17 +35,16 @@ export const PlanDetails: React.FC<PlanDetailsProps> = ({
     return (
       <div className="card plan-details-card empty-plan-box">
         <h2 className="card-title">
-          <span className="title-icon">🔍</span> Execution Plan Details
+          Execution Plan Details
         </h2>
         <div className="tab-empty-prompt">
-          <span className="empty-prompt-icon">🔍</span>
           <h3>No Execution Plan Available Yet</h3>
           <p>
             Analyze a query in the Query Analyzer tab to capture the actual PostgreSQL <code>EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)</code> hierarchy.
           </p>
           {onNavigateToAnalyzer && (
             <button type="button" className="btn btn-primary" onClick={onNavigateToAnalyzer}>
-              ⚡ Go to Query Analyzer
+              Go to Query Analyzer
             </button>
           )}
         </div>
@@ -111,7 +110,7 @@ export const PlanDetails: React.FC<PlanDetailsProps> = ({
       <div className="plan-details-header">
         <div>
           <h2 className="card-title">
-            <span className="title-icon">🔍</span> Execution Plan Hierarchy &amp; JSON
+            Execution Plan Hierarchy &amp; JSON
           </h2>
           <p className="card-subtitle">
             Inspect the PostgreSQL optimizer cost model vs. actual buffer hits and row counts measured by <code>EXPLAIN (ANALYZE, BUFFERS)</code>.
@@ -142,7 +141,7 @@ export const PlanDetails: React.FC<PlanDetailsProps> = ({
             onClick={handleCopyJson}
             title="Copy plan JSON to clipboard"
           >
-            {copying ? '✓ Copied!' : '📋 Copy JSON'}
+            {copying ? 'Copied!' : 'Copy JSON'}
           </button>
         </div>
       </div>

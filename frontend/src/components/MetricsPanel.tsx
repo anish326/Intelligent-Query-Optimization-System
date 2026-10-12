@@ -45,8 +45,7 @@ export const MetricsPanel: React.FC<MetricsPanelProps> = ({
         </h2>
         <div className="metrics-empty-state">
           <div className="empty-icon-circle">
-            <span className="empty-icon">📊</span>
-          </div>
+            </div>
           <h3 className="empty-title">Ready to analyze query performance</h3>
           <p className="empty-desc">
             Submit a SQL query in the editor to measure execution latency, buffer cache hits, and compare against the Random Forest ML model.
@@ -228,12 +227,12 @@ export const MetricsPanel: React.FC<MetricsPanelProps> = ({
       <div className="quick-inspect-row">
         {onOpenCharts && (
           <button type="button" className="btn btn-ghost btn-sm" onClick={onOpenCharts}>
-            📈 View Latency Charts &rarr;
+            View Latency Charts &rarr;
           </button>
         )}
         {onOpenPlan && (
           <button type="button" className="btn btn-ghost btn-sm" onClick={onOpenPlan}>
-            🔍 View Execution Plan &rarr;
+            View Execution Plan &rarr;
           </button>
         )}
       </div>
