@@ -19,7 +19,7 @@ export const MetricsPanel: React.FC<MetricsPanelProps> = ({
     return (
       <div className="card metrics-card">
         <h2 className="card-title">
-          <span className="title-icon">⏱️</span> Execution Metrics
+          Execution Metrics
         </h2>
         <div className="metrics-loading-skeleton">
           <div className="skeleton-spinner-wrap">
@@ -41,7 +41,7 @@ export const MetricsPanel: React.FC<MetricsPanelProps> = ({
     return (
       <div className="card metrics-card">
         <h2 className="card-title">
-          <span className="title-icon">⏱️</span> Execution Metrics
+          Execution Metrics
         </h2>
         <div className="metrics-empty-state">
           <div className="empty-icon-circle">
@@ -99,7 +99,7 @@ export const MetricsPanel: React.FC<MetricsPanelProps> = ({
     <div className="card metrics-card">
       <div className="metrics-card-header">
         <h2 className="card-title">
-          <span className="title-icon">⏱️</span> Execution Metrics
+          Execution Metrics
         </h2>
         <span className="sample-badge">
           {runs.length} runs (median)

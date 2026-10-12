@@ -11,7 +11,6 @@ import {
   ToastMessage,
 } from './types';
 
-import { Header } from './components/Header';
 import { QueryWorkspace, QUERY_EXAMPLES } from './components/QueryWorkspace';
 import { MetricsPanel } from './components/MetricsPanel';
 import { ChartsSection } from './components/ChartsSection';
@@ -323,30 +322,24 @@ function App() {
   };
 
   return (
-    <div className="app-shell">
+    <div className="app-layout">
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
 
-      <Header
-        backendConnected={backendConnected}
-        modelStatus={modelStatus}
-        isSimulationMode={isSimulationMode}
-        onOpenSettings={() => {
-          setTempApiUrl(apiUrl);
-          setShowApiModal(true);
-        }}
-      />
+      {/* Left Sidebar Navigation */}
+      <aside className="app-sidebar" aria-label="Dashboard views">
+        <div className="sidebar-brand">
+          <h1 className="sidebar-title">Intelligent Query Optimization</h1>
+        </div>
 
-      {/* Navigation Tabs */}
-      <nav className="tab-nav-container" aria-label="Dashboard views">
-        <div className="tab-nav-list" role="tablist">
+        <nav className="sidebar-nav" role="tablist">
           <button
             type="button"
             role="tab"
             aria-selected={activeTab === 'analyzer'}
-            className={`tab-nav-btn ${activeTab === 'analyzer' ? 'active' : ''}`}
+            className={`sidebar-nav-btn ${activeTab === 'analyzer' ? 'active' : ''}`}
             onClick={() => setActiveTab('analyzer')}
           >
-            <span>Query Analyzer</span>
+            <span className="sidebar-btn-label">Query Analyzer</span>
             {result && <span className="tab-pill-badge">{result.measured_runtime_ms.toFixed(2)} ms</span>}
           </button>
 
@@ -354,10 +347,10 @@ function App() {
             type="button"
             role="tab"
             aria-selected={activeTab === 'charts'}
-            className={`tab-nav-btn ${activeTab === 'charts' ? 'active' : ''}`}
+            className={`sidebar-nav-btn ${activeTab === 'charts' ? 'active' : ''}`}
             onClick={() => setActiveTab('charts')}
           >
-            <span>Latency Charts</span>
+            <span className="sidebar-btn-label">Latency Charts</span>
             {result && <span className="tab-status-dot"></span>}
           </button>
 
@@ -365,10 +358,10 @@ function App() {
             type="button"
             role="tab"
             aria-selected={activeTab === 'compare'}
-            className={`tab-nav-btn ${activeTab === 'compare' ? 'active' : ''}`}
+            className={`sidebar-nav-btn ${activeTab === 'compare' ? 'active' : ''}`}
             onClick={() => setActiveTab('compare')}
           >
-            <span>Compare Rewrites</span>
+            <span className="sidebar-btn-label">Compare Rewrites</span>
             {comparison && (
               <span className="tab-pill-badge delta-badge">
                 {comparison.measured_delta_ms > 0 ? '+' : ''}
@@ -381,10 +374,10 @@ function App() {
             type="button"
             role="tab"
             aria-selected={activeTab === 'plan'}
-            className={`tab-nav-btn ${activeTab === 'plan' ? 'active' : ''}`}
+            className={`sidebar-nav-btn ${activeTab === 'plan' ? 'active' : ''}`}
             onClick={() => setActiveTab('plan')}
           >
-            <span>Execution Plan</span>
+            <span className="sidebar-btn-label">Execution Plan</span>
             {result?.plan && <span className="tab-status-dot"></span>}
           </button>
 
@@ -392,10 +385,10 @@ function App() {
             type="button"
             role="tab"
             aria-selected={activeTab === 'model'}
-            className={`tab-nav-btn ${activeTab === 'model' ? 'active' : ''}`}
+            className={`sidebar-nav-btn ${activeTab === 'model' ? 'active' : ''}`}
             onClick={() => setActiveTab('model')}
           >
-            <span>ML Intelligence</span>
+            <span className="sidebar-btn-label">ML Intelligence</span>
             {modelStatus?.samples ? <span className="tab-pill-badge">{modelStatus.samples} samples</span> : null}
           </button>
 
@@ -403,16 +396,31 @@ function App() {
             type="button"
             role="tab"
             aria-selected={activeTab === 'history'}
-            className={`tab-nav-btn ${activeTab === 'history' ? 'active' : ''}`}
+            className={`sidebar-nav-btn ${activeTab === 'history' ? 'active' : ''}`}
             onClick={() => setActiveTab('history')}
           >
-            <span>Audit History</span>
+            <span className="sidebar-btn-label">Audit History</span>
             <span className="tab-pill-badge">{historyEntries.length}</span>
           </button>
-        </div>
-      </nav>
+        </nav>
 
-      <main className="main-content">
+        <div className="sidebar-footer">
+          <button
+            type="button"
+            className="sidebar-settings-btn"
+            onClick={() => {
+              setTempApiUrl(apiUrl);
+              setShowApiModal(true);
+            }}
+          >
+            API Settings
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="app-main-wrapper">
+        <main className="main-content">
         {/* Tab 1: Query Analyzer */}
         {activeTab === 'analyzer' && (
           <section className="tab-panel workspace-grid">
@@ -513,7 +521,19 @@ function App() {
             />
           </section>
         )}
-      </main>
+        </main>
+
+        <footer className="app-footer">
+          <div className="footer-content">
+            <p className="footer-tagline">
+              Intelligent Query Optimization in Modern Database Systems &bull; PostgreSQL 16 EXPLAIN ANALYZE &amp; ML Regression
+            </p>
+            <p className="footer-meta">
+              Read-only role <code>query_reader</code> &bull; Statement timeout 5000ms &bull; Clean Modular Architecture
+            </p>
+          </div>
+        </footer>
+      </div>
 
       {/* API Endpoint & Backend Settings Modal */}
       {showApiModal && (
@@ -574,16 +594,7 @@ function App() {
         </div>
       )}
 
-      <footer className="app-footer">
-        <div className="footer-content">
-          <p className="footer-tagline">
-            Intelligent Query Optimization in Modern Database Systems &bull; PostgreSQL 16 EXPLAIN ANALYZE &amp; ML Regression
-          </p>
-          <p className="footer-meta">
-            Read-only role <code>query_reader</code> &bull; Statement timeout 5000ms &bull; Clean Modular Architecture
-          </p>
-        </div>
-      </footer>
+
     </div>
   );
 }
