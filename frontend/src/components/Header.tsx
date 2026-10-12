@@ -1,12 +1,19 @@
-﻿import React from 'react';
+import React from 'react';
 import { ModelStatus } from '../types';
 
 interface HeaderProps {
   backendConnected: boolean | null;
   modelStatus: ModelStatus | null;
+  isSimulationMode?: boolean;
+  onOpenSettings?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ backendConnected, modelStatus }) => {
+export const Header: React.FC<HeaderProps> = ({
+  backendConnected,
+  modelStatus,
+  isSimulationMode = false,
+  onOpenSettings,
+}) => {
   const isTrained = (modelStatus?.samples ?? 0) > 0 && modelStatus?.version != null;
 
   return (
@@ -29,12 +36,39 @@ export const Header: React.FC<HeaderProps> = ({ backendConnected, modelStatus })
 
       <div className="header-status-group">
         {/* Backend Connection Indicator */}
-        <div className={`status-pill ${backendConnected === true ? 'pill-connected' : backendConnected === false ? 'pill-disconnected' : 'pill-checking'}`}>
-          <span className="status-dot"></span>
-          <span className="status-label">
-            {backendConnected === true ? 'PostgreSQL 16 Connected' : backendConnected === false ? 'Backend Offline' : 'Connecting...'}
-          </span>
-        </div>
+        {isSimulationMode ? (
+          <div
+            className="status-pill pill-simulation"
+            title="Running in-browser ML inference & PostgreSQL plan simulation. Click to configure live backend."
+            onClick={onOpenSettings}
+            style={{ cursor: 'pointer' }}
+          >
+            <span className="status-dot"></span>
+            <span className="status-label">In-Browser ML Engine (Cloud Preview) ⚙️</span>
+          </div>
+        ) : (
+          <div
+            className={`status-pill ${
+              backendConnected === true
+                ? 'pill-connected'
+                : backendConnected === false
+                ? 'pill-disconnected'
+                : 'pill-checking'
+            }`}
+            onClick={onOpenSettings}
+            style={{ cursor: 'pointer' }}
+            title="Click to view or edit backend connection settings"
+          >
+            <span className="status-dot"></span>
+            <span className="status-label">
+              {backendConnected === true
+                ? 'PostgreSQL 16 Connected (Live) ⚙️'
+                : backendConnected === false
+                ? 'Backend Offline ⚙️'
+                : 'Connecting...'}
+            </span>
+          </div>
+        )}
 
         {/* ML Model Status */}
         <div className={`status-pill ${isTrained ? 'pill-trained' : 'pill-untrained'}`}>
@@ -45,7 +79,7 @@ export const Header: React.FC<HeaderProps> = ({ backendConnected, modelStatus })
             ) : backendConnected ? (
               'ML Model: Untrained'
             ) : (
-              'ML Model: Unavailable'
+              'ML Model: Initializing'
             )}
           </span>
         </div>
