@@ -21,7 +21,7 @@ import { ComparisonPanel } from './components/ComparisonPanel';
 import { HistorySection } from './components/HistorySection';
 import { ToastContainer } from './components/Toast';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = ((import.meta as any).env?.VITE_API_BASE as string | undefined)?.replace(/\/$/, '') || 'http://localhost:8000';
 
 type ActiveTab = 'analyzer' | 'charts' | 'compare' | 'plan' | 'model' | 'history';
 
